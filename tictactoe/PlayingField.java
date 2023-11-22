@@ -8,7 +8,7 @@ public class PlayingField extends JPanel {
 
     public PlayingField() {
         setLayout(new GridLayout(3, 3, GAP, GAP));
-        setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
+        setBorder(BorderFactory.createEmptyBorder(GAP, GAP, 0, GAP));
 
         addButtons();
     }
