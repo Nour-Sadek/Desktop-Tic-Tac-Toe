@@ -2,7 +2,10 @@ package tictactoe;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
+import java.util.List;
 
 public class TicTacToe extends JFrame {
 
@@ -166,7 +169,9 @@ public class TicTacToe extends JFrame {
     }
 
     protected static void pressRandomCell() {
-        for (Cell cell: Cell.getCells()) {
+        List<Cell> cells = new ArrayList<>(Cell.getCells());
+        Collections.shuffle(cells);
+        for (Cell cell: cells) {
             if (cell.getText().equals(" ")) {
                 cell.doClick();
                 return;
