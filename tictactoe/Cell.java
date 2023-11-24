@@ -41,24 +41,21 @@ public class Cell extends JButton {
         setBackground(CELL_COLOR);
         setFont(LABEL_FONT);
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        setEnabled(false);
         addActionListener(e -> {
-            System.out.println(this.getText());
-            switch (TicTacToe.gameMode) {
-                case GameMode.GAME_NOT_STARTED:
-                    setText("X");
-                    xTurn = !xTurn;
-                    TicTacToe.gameMode = GameMode.GAME_IN_PROGRESS;
-                    TicTacToe.statusLabel.setText(TicTacToe.gameMode.getTextLabel());
-                    break;
-                case GameMode.GAME_IN_PROGRESS:
+            if (TicTacToe.startOrReset == StatusStartReset.RESET) {
+                if (TicTacToe.gameMode == GameMode.GAME_IN_PROGRESS) {
                     String text = xTurn ? "X" : "O";
                     setText(text);
                     xTurn = !xTurn;
-
                     determineGameStatus(text);
-                    break;
-                default:
-                    break;
+                    if (TicTacToe.player1 == PlayerType.ROBOT && TicTacToe.player2 == PlayerType.HUMAN && xTurn) {
+                        TicTacToe.pressRandomCell();
+                    }
+                    if (TicTacToe.player1 == PlayerType.HUMAN && TicTacToe.player2 == PlayerType.ROBOT && !xTurn) {
+                        TicTacToe.pressRandomCell();
+                    }
+                }
             }
         });
 
@@ -76,6 +73,7 @@ public class Cell extends JButton {
     public static void setXTurn(boolean xTurn) {
         Cell.xTurn = xTurn;
     }
+    public static boolean getXTurn() { return Cell.xTurn; }
 
     private static void determineGameStatus(String text) {
         if (text.equals("X") && winningPatternPresent(text)) {
