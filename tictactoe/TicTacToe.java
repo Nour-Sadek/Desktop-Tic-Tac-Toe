@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.List;
+import java.text.MessageFormat;
 
 public class TicTacToe extends JFrame {
 
@@ -30,11 +31,84 @@ public class TicTacToe extends JFrame {
         setLayout(new BorderLayout(5, 5));
 
         // Add components to the frame
+        setMenu();
         add(playingField, BorderLayout.CENTER);
         setBottomPanel();
         setUpperPanel();
 
         setVisible(true);
+    }
+
+    private void setMenu() {
+        // Creating the menuBar
+        JMenuBar menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+
+        // Creating the menu "Game"
+        JMenu game = new JMenu("Game");
+        game.setName("MenuGame");
+        menuBar.add(game);
+
+        // Creating the five menu items
+        JMenuItem humanVSHuman = new JMenuItem("Human vs Human");
+        humanVSHuman.setName("MenuHumanHuman");
+        JMenuItem humanVSRobot = new JMenuItem("Human vs Robot");
+        humanVSRobot.setName("MenuHumanRobot");
+        JMenuItem robotVSHuman = new JMenuItem("Robot vs Human");
+        robotVSHuman.setName("MenuRobotHuman");
+        JMenuItem robotVSRobot = new JMenuItem("Robot vs Robot");
+        robotVSRobot.setName("MenuRobotRobot");
+        JMenuItem exit = new JMenuItem("Exit");
+        exit.setName("MenuExit");
+
+        game.add(humanVSHuman);
+        game.add(humanVSRobot);
+        game.add(robotVSHuman);
+        game.add(robotVSRobot);
+        game.addSeparator();
+        game.add(exit);
+
+        // Add event listeners to the five menu items
+        humanVSHuman.addActionListener(e -> {
+            // Update the button labels on the frame
+            player1 = PlayerType.HUMAN;
+            player1Button.setText(player1.getPlayerType());
+            player2 = PlayerType.HUMAN;
+            player2Button.setText(player2.getPlayerType());
+
+            startNewMatch();
+        });
+        humanVSRobot.addActionListener(e -> {
+            // Update the button labels on the frame
+            player1 = PlayerType.HUMAN;
+            player1Button.setText(player1.getPlayerType());
+            player2 = PlayerType.ROBOT;
+            player2Button.setText(player2.getPlayerType());
+
+            startNewMatch();
+        });
+        robotVSHuman.addActionListener(e -> {
+            // Update the button labels on the frame
+            player1 = PlayerType.ROBOT;
+            player1Button.setText(player1.getPlayerType());
+            player2 = PlayerType.HUMAN;
+            player2Button.setText(player2.getPlayerType());
+
+            startNewMatch();
+        });
+        robotVSRobot.addActionListener(e -> {
+            // Update the button labels on the frame
+            player1 = PlayerType.ROBOT;
+            player1Button.setText(player1.getPlayerType());
+            player2 = PlayerType.ROBOT;
+            player2Button.setText(player2.getPlayerType());
+
+            startNewMatch();
+        });
+        exit.addActionListener(e -> {
+            this.dispose();
+        });
+
     }
 
     private void setUpperPanel() {
@@ -98,22 +172,7 @@ public class TicTacToe extends JFrame {
                 player2Button.setEnabled(true);
 
             } else if (startOrReset == StatusStartReset.START) {
-
-                gameMode = GameMode.GAME_IN_PROGRESS;
-                statusLabel.setText(gameMode.getTextLabel());
-
-                startOrReset = StatusStartReset.RESET;
-                startResetButton.setText(startOrReset.getButtonLabel());
-
-                Set<Cell> cells = Cell.getCells();
-                for (Cell cell: cells) {
-                    cell.setEnabled(true);
-                }
-
-                player1Button.setEnabled(false);
-                player2Button.setEnabled(false);
-
-                startGame();
+                startNewMatch();
             }
 
         });
@@ -150,7 +209,6 @@ public class TicTacToe extends JFrame {
     }
 
     private void startGame() {
-        // TODO
         if (player1 == PlayerType.ROBOT && player2 == PlayerType.ROBOT) {
             while (gameMode == GameMode.GAME_IN_PROGRESS) {
                 Thread thread = new Thread(() -> {
@@ -178,4 +236,25 @@ public class TicTacToe extends JFrame {
             }
         }
     }
+
+    private void startNewMatch() {
+        gameMode = GameMode.GAME_IN_PROGRESS;
+        statusLabel.setText(MessageFormat.format(gameMode.getTextLabel(), player1.getPlayerType(), "X"));
+
+        startOrReset = StatusStartReset.RESET;
+        startResetButton.setText(startOrReset.getButtonLabel());
+
+        Set<Cell> cells = Cell.getCells();
+        for (Cell cell: cells) {
+            cell.setText(" ");
+            cell.setEnabled(true);
+        }
+        Cell.setXTurn(true);
+
+        player1Button.setEnabled(false);
+        player2Button.setEnabled(false);
+
+        startGame();
+    }
+
 }

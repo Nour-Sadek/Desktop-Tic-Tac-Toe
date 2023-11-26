@@ -3,6 +3,7 @@ package tictactoe;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.text.MessageFormat;
 
 public class Cell extends JButton {
 
@@ -44,7 +45,7 @@ public class Cell extends JButton {
         setEnabled(false);
         addActionListener(e -> {
             if (TicTacToe.startOrReset == StatusStartReset.RESET) {
-                if (TicTacToe.gameMode == GameMode.GAME_IN_PROGRESS) {
+                if (TicTacToe.gameMode == GameMode.GAME_IN_PROGRESS && this.getText().equals(" ")) {
                     String text = xTurn ? "X" : "O";
                     setText(text);
                     xTurn = !xTurn;
@@ -78,18 +79,23 @@ public class Cell extends JButton {
     private static void determineGameStatus(String text) {
         if (text.equals("X") && winningPatternPresent(text)) {
             TicTacToe.gameMode = GameMode.X_WINS;
-            TicTacToe.statusLabel.setText(TicTacToe.gameMode.getTextLabel());
+            TicTacToe.statusLabel.setText(MessageFormat.format(TicTacToe.gameMode.getTextLabel(), TicTacToe.player1.getPlayerType()));
             return;
         }
         if (text.equals("O") && winningPatternPresent(text)) {
             TicTacToe.gameMode = GameMode.O_WINS;
-            TicTacToe.statusLabel.setText(TicTacToe.gameMode.getTextLabel());
+            TicTacToe.statusLabel.setText(MessageFormat.format(TicTacToe.gameMode.getTextLabel(), TicTacToe.player2.getPlayerType()));
             return;
         }
 
         // Check if there is a draw
         for (Cell cell: cells) {
-            if (cell.getText().equals(" ")) return;
+            if (cell.getText().equals(" ")) {
+                String turn = xTurn ? "X" : "O";
+                String currentPlayerType = xTurn ? TicTacToe.player1.getPlayerType() : TicTacToe.player2.getPlayerType();
+                TicTacToe.statusLabel.setText(MessageFormat.format(TicTacToe.gameMode.getTextLabel(), currentPlayerType, turn));
+                return;
+            }
         }
 
         // There is a draw
